@@ -26,6 +26,7 @@ import com.asus.robotframework.API.RobotCallback;
 import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
 import com.asus.robotframework.API.RobotFace;
+import com.asus.robotframework.API.WheelLights;
 
 
 public class MainActivity extends RobotActivity {
@@ -152,15 +153,15 @@ public class MainActivity extends RobotActivity {
                     break;
                 case 1:// move
                     robotAPI.robot.setExpression(RobotFace.SHOCKED);
-                    if (command.get_command_value().equals(CommandJsonFormatObj.FORWARD)) {
+                    if (command.get_command_value().equals(CommandJsonFormatObj.MOV_FORWARD)) {
                         robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.FORWARD);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.BACKWARD)) {
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_BACKWARD)) {
                         robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.BACKWARD);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.LEFT)) {
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_LEFT)) {
                         robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.RIGHT)) {
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_RIGHT)) {
                         robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_RIGHT);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.STOP)) {
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_STOP)) {
                         robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.STOP);
                     }
                     break;
@@ -168,6 +169,29 @@ public class MainActivity extends RobotActivity {
                     robotAPI.robot.setExpression(RobotFace.ACTIVE);
                     robotAPI.robot.speak(command.get_command_value());
                     break;
+                case 3:// wheel light
+                    if (command.get_command_value().equals(CommandJsonFormatObj.LIGHT_BREATH)) {
+                        robotAPI.wheelLights.turnOff(WheelLights.Lights.SYNC_BOTH, 0xff);
+                        robotAPI.wheelLights.setColor(WheelLights.Lights.SYNC_BOTH, 0xff, 0x00D031);
+                        robotAPI.wheelLights.setBrightness(WheelLights.Lights.SYNC_BOTH, 0xff, 10);
+                        robotAPI.wheelLights.startBreathing(WheelLights.Lights.SYNC_BOTH, 0xff, 20, 10, 0);
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.LIGHT_BLINK)) {
+                        robotAPI.wheelLights.turnOff(WheelLights.Lights.SYNC_BOTH, 0xff);
+                        robotAPI.wheelLights.setColor(WheelLights.Lights.SYNC_BOTH, 0xff, 0x007F7F);
+                        robotAPI.wheelLights.setBrightness(WheelLights.Lights.SYNC_BOTH, 0xff, 10);
+                        robotAPI.wheelLights.startBlinking(WheelLights.Lights.SYNC_BOTH, 0xff, 30, 10, 5);
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.LIGHT_CHARGE)) {
+                        robotAPI.wheelLights.turnOff(WheelLights.Lights.SYNC_BOTH, 0xff);
+                        robotAPI.wheelLights.setColor(WheelLights.Lights.SYNC_BOTH, 0xff, 0xFF9000);
+                        robotAPI.wheelLights.setBrightness(WheelLights.Lights.SYNC_BOTH, 0xff, 10);
+                        robotAPI.wheelLights.startCharging(WheelLights.Lights.SYNC_BOTH, 0, 1, WheelLights.Direction.DIRECTION_FORWARD, 20);
+                    } else if (command.get_command_value().equals(CommandJsonFormatObj.LIGHT_MARQUEE)) {
+                        robotAPI.wheelLights.turnOff(WheelLights.Lights.SYNC_BOTH, 0xff);
+                        robotAPI.wheelLights.setBrightness(WheelLights.Lights.SYNC_BOTH, 0xff, 20);
+                        robotAPI.wheelLights.startMarquee(WheelLights.Lights.SYNC_BOTH, WheelLights.Direction.DIRECTION_FORWARD, 40, 20, 3);
+                    }
+                    break;
+
             }
         }
     }

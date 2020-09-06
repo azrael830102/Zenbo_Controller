@@ -6,14 +6,20 @@ package com.example.zenbocontrolserver;
  * 0 = disconnect---|--------------------""-----------------------
  * 1 = movement-----|---Forward ; Backward ; Left ; Right ; Stop--
  * 2 = speak--------|--------------[input content]----------------
+ * 3 = wheel light--|----Breath ; Blink ; Charging ; Marquee------
  */
 public class CommandJsonFormatObj {
 
-    public static final String FORWARD = "Forward";
-    public static final String BACKWARD = "Backward";
-    public static final String LEFT = "Left";
-    public static final String RIGHT = "Right";
-    public static final String STOP = "Stop";
+    public static final String MOV_FORWARD = "Forward";
+    public static final String MOV_BACKWARD = "Backward";
+    public static final String MOV_LEFT = "Left";
+    public static final String MOV_RIGHT = "Right";
+    public static final String MOV_STOP = "Stop";
+
+    public static final String LIGHT_BREATH = "Breath";
+    public static final String LIGHT_BLINK = "Blink";
+    public static final String LIGHT_CHARGE = "Charging";
+    public static final String LIGHT_MARQUEE = "Marquee";
 
     private String _command_type;
     private String _command_value;

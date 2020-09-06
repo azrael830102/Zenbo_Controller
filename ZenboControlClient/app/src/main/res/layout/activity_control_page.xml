@@ -83,13 +83,70 @@
         android:text="Stop"
         android:textSize="15dp" />
     <!-- ==========  movement End  =============== -->
+    <!-- ========  wheel light Srart  ============ -->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="22dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginBottom="296dp"
+        android:text="Wheel Light : "
+        android:textSize="25sp" />
+
+    <Button
+        android:id="@+id/btn_light_breath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="28dp"
+        android:layout_marginBottom="228dp"
+        android:text="Breath"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/btn_light_blink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="122dp"
+        android:layout_marginBottom="228dp"
+        android:text="Blink"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/btn_light_charge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="216dp"
+        android:layout_marginBottom="228dp"
+        android:text="Charging"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/btn_light_marquee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="319dp"
+        android:layout_marginBottom="228dp"
+        android:text="Marquee"
+        android:textSize="15dp" />
+
+    <!-- ==========  wheel light End  ============ -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="28dp"
         android:layout_marginBottom="110dp"
         android:text="Talk : "
         android:textSize="25sp" />

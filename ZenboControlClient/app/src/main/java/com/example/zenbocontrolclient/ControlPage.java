@@ -30,13 +30,19 @@ public class ControlPage extends AppCompatActivity {
     Thread netThread;
 
     private Button btn_disconnect;
+
     private Button btn_forward;
     private Button btn_backward;
     private Button btn_turn_left;
     private Button btn_turn_right;
     private Button btn_stop;
-    private Button btn_speak;
 
+    private Button btn_light_breath;
+    private Button btn_light_blink;
+    private Button btn_light_charge;
+    private Button btn_light_marquee;
+
+    private Button btn_speak;
     private EditText et_speak_content;
 
     Socket serverSocket = null;
@@ -93,11 +99,18 @@ public class ControlPage extends AppCompatActivity {
 
     private void initViewElement() {
         btn_disconnect = findViewById(R.id.btn_disconnect);
+
         btn_forward = findViewById(R.id.btn_forward);
         btn_backward = findViewById(R.id.btn_backward);
         btn_turn_left = findViewById(R.id.btn_turn_left);
         btn_turn_right = findViewById(R.id.btn_turn_right);
         btn_stop = findViewById(R.id.btn_stop);
+
+        btn_light_breath = findViewById(R.id.btn_light_breath);
+        btn_light_blink = findViewById(R.id.btn_light_blink);
+        btn_light_charge = findViewById(R.id.btn_light_charge);
+        btn_light_marquee = findViewById(R.id.btn_light_marquee);
+
         btn_speak = findViewById(R.id.btn_speak);
         et_speak_content = findViewById(R.id.et_speak_content);
     }
@@ -111,6 +124,12 @@ public class ControlPage extends AppCompatActivity {
             btn_backward.setOnClickListener(click);
             btn_turn_left.setOnClickListener(click);
             btn_turn_right.setOnClickListener(click);
+
+            btn_light_breath.setOnClickListener(click);
+            btn_light_blink.setOnClickListener(click);
+            btn_light_charge.setOnClickListener(click);
+            btn_light_marquee.setOnClickListener(click);
+
             btn_stop.setOnClickListener(click);
             btn_speak.setOnClickListener(click);
         }
@@ -195,21 +214,30 @@ public class ControlPage extends AppCompatActivity {
 
         private CommandJsonFormatObj setCommandObj(View v) {
             Button btn = (Button) v;
+
             switch (btn.getId()) {
                 case R.id.btn_disconnect:
                     return new CommandJsonFormatObj("0", "");
                 case R.id.btn_forward:
-                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.FORWARD);
+                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.MOV_FORWARD);
                 case R.id.btn_backward:
-                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.BACKWARD);
+                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.MOV_BACKWARD);
                 case R.id.btn_turn_left:
-                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.LEFT);
+                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.MOV_LEFT);
                 case R.id.btn_turn_right:
-                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.RIGHT);
+                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.MOV_RIGHT);
                 case R.id.btn_stop:
-                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.STOP);
+                    return new CommandJsonFormatObj("1", CommandJsonFormatObj.MOV_STOP);
                 case R.id.btn_speak:
                     return new CommandJsonFormatObj("2", et_speak_content.getText().toString());
+                case R.id.btn_light_breath:
+                    return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_BREATH);
+                case R.id.btn_light_blink:
+                    return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_BLINK);
+                case R.id.btn_light_charge:
+                    return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_CHARGE);
+                case R.id.btn_light_marquee:
+                    return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_MARQUEE);
                 default:
                     return new CommandJsonFormatObj();
             }
