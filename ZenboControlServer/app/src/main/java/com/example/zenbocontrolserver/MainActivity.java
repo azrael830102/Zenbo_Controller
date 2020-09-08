@@ -2,6 +2,7 @@ package com.example.zenbocontrolserver;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,7 +37,7 @@ public class MainActivity extends RobotActivity {
     Thread netThread;
     Thread listeningThread;
     Thread receivingThread;
-
+    TextView hostInfo;
     ServerSocket serverSocket = null;
 
 
@@ -44,13 +45,16 @@ public class MainActivity extends RobotActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        hostInfo = findViewById(R.id.hostInfo);
 
         netThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     serverSocket = new ServerSocket(port);
+                    hostInfo.setText(getLocalIpAddress() + " : " + port);
                     Log.d("Host ", getLocalIpAddress());
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
