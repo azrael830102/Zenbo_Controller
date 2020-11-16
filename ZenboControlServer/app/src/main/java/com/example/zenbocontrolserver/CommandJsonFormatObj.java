@@ -7,6 +7,7 @@ package com.example.zenbocontrolserver;
  * 1 = movement-----|---Forward ; Backward ; Left ; Right ; Stop--
  * 2 = speak--------|--------------[input content]----------------
  * 3 = wheel light--|----Breath ; Blink ; Charging ; Marquee------
+ * 4 = read sensor--|--------------------""-----------------------
  */
 public class CommandJsonFormatObj {
 

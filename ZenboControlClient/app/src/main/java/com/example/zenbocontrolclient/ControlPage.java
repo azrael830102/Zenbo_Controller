@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
@@ -30,6 +31,7 @@ public class ControlPage extends AppCompatActivity {
     Thread netThread;
 
     private Button btn_disconnect;
+    private Button btn_read_sensor;
 
     private Button btn_forward;
     private Button btn_backward;
@@ -62,15 +64,15 @@ public class ControlPage extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Log.d("Connect", "Waitting to connect......");
+                    Log.d("Connect", "Waiting to connect......");
                     serverSocket = SocketFactory.getDefault().createSocket();
-                    SocketAddress remoteaddr = new InetSocketAddress(server_ip, port);
+                    SocketAddress remote_addr = new InetSocketAddress(server_ip, port);
                     try {
-                        serverSocket.connect(remoteaddr, 5000);
+                        serverSocket.connect(remote_addr, 5000);
                     } catch (SocketTimeoutException | UnknownHostException se) {
                         Intent it = new Intent();
                         Bundle bundle = new Bundle();
-                        bundle.putString("errMsg", "This chatting room does not exist");
+                        bundle.putString("errMsg", "Connected failed");
                         it.putExtras(bundle);
                         it.setClass(ControlPage.this, MainActivity.class);
                         Log.d("Connect", "Not Connected");
@@ -78,8 +80,14 @@ public class ControlPage extends AppCompatActivity {
                     }
                     if (serverSocket.isConnected()) {
                         Log.d("Connect", "Connected");
+                        JSONObject json_obj = new JSONObject();
+                        json_obj.put("isController", true);
+                        byte[] jsonByte = (json_obj.toString() + "\n").getBytes();
+                        DataOutputStream outputStream = new DataOutputStream(serverSocket.getOutputStream());
+                        outputStream.write(jsonByte);
+                        outputStream.flush();
                     }
-                } catch (IOException e) {
+                } catch (IOException | JSONException e) {
                     Intent it = new Intent();
                     Bundle bundle = new Bundle();
                     bundle.putString("errMsg", e.getMessage());
@@ -98,6 +106,7 @@ public class ControlPage extends AppCompatActivity {
     }
 
     private void initViewElement() {
+        btn_read_sensor = findViewById(R.id.btn_read_sensor);
         btn_disconnect = findViewById(R.id.btn_disconnect);
 
         btn_forward = findViewById(R.id.btn_forward);
@@ -118,7 +127,7 @@ public class ControlPage extends AppCompatActivity {
     private void setBtnOnClickListener() {
         if (serverSocket != null && serverSocket.isConnected()) {
             BtnClick click = new BtnClick(serverSocket);
-
+            btn_read_sensor.setOnClickListener(click);
             btn_disconnect.setOnClickListener(click);
             btn_forward.setOnClickListener(click);
             btn_backward.setOnClickListener(click);
@@ -238,6 +247,8 @@ public class ControlPage extends AppCompatActivity {
                     return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_CHARGE);
                 case R.id.btn_light_marquee:
                     return new CommandJsonFormatObj("3", CommandJsonFormatObj.LIGHT_MARQUEE);
+                case R.id.btn_read_sensor:
+                    return new CommandJsonFormatObj("4", "");
                 default:
                     return new CommandJsonFormatObj();
             }

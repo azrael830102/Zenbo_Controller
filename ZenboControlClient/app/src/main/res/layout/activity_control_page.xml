@@ -7,6 +7,27 @@
     android:background="#C0EBFF"
     tools:context=".ControlPage">
 
+    <Button
+        android:id="@+id/btn_disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="260dp"
+        android:layout_marginBottom="600dp"
+        android:text="Disconnect"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/btn_read_sensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="600dp"
+        android:text="Read Sensor"
+        android:textSize="15dp" />
 
     <!-- ==========  movement start  =============== -->
 
@@ -19,17 +40,6 @@
         android:layout_marginBottom="558dp"
         android:text="Move : "
         android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/btn_disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="260dp"
-        android:layout_marginBottom="600dp"
-        android:text="Disconnect"
-        android:textSize="15dp" />
 
     <Button
         android:id="@+id/btn_forward"
@@ -83,17 +93,18 @@
         android:text="Stop"
         android:textSize="15dp" />
     <!-- ==========  movement End  =============== -->
-    <!-- ========  wheel light Srart  ============ -->
+    <!-- ========  wheel light Start  ============ -->
 
-    <TextView
+    <Button
+        android:id="@+id/btn_light_marquee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="296dp"
-        android:text="Wheel Light : "
-        android:textSize="25sp" />
+        android:layout_marginLeft="319dp"
+        android:layout_marginBottom="241dp"
+        android:text="Marquee"
+        android:textSize="15dp" />
 
     <Button
         android:id="@+id/btn_light_breath"
@@ -102,7 +113,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="28dp"
-        android:layout_marginBottom="228dp"
+        android:layout_marginBottom="241dp"
         android:text="Breath"
         android:textSize="15dp" />
 
@@ -113,7 +124,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="122dp"
-        android:layout_marginBottom="228dp"
+        android:layout_marginBottom="241dp"
         android:text="Blink"
         android:textSize="15dp" />
 
@@ -124,22 +135,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="216dp"
-        android:layout_marginBottom="228dp"
+        android:layout_marginBottom="241dp"
         android:text="Charging"
         android:textSize="15dp" />
-
-    <Button
-        android:id="@+id/btn_light_marquee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="319dp"
-        android:layout_marginBottom="228dp"
-        android:text="Marquee"
-        android:textSize="15dp" />
-
-    <!-- ==========  wheel light End  ============ -->
 
     <TextView
         android:layout_width="wrap_content"
@@ -147,20 +145,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="28dp"
-        android:layout_marginBottom="110dp"
-        android:text="Talk : "
+        android:layout_marginBottom="307dp"
+        android:text="Wheel Light : "
         android:textSize="25sp" />
 
-    <EditText
-        android:id="@+id/et_speak_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="97dp"
-        android:layout_marginBottom="101dp"
-        android:hint="Type something..."
-        android:textSize="25sp" />
+    <!-- ==========  wheel light End  ============ -->
+    <!-- ======== Talk something start  ========== -->
 
     <Button
         android:id="@+id/btn_speak"
@@ -169,9 +159,31 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="314dp"
-        android:layout_marginBottom="102dp"
+        android:layout_marginBottom="150dp"
         android:text="Speak"
         android:textSize="15dp" />
 
+    <EditText
+        android:id="@+id/et_speak_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="97dp"
+        android:layout_marginBottom="150dp"
+        android:hint="Type something..."
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="28dp"
+        android:layout_marginBottom="157dp"
+        android:text="Talk : "
+        android:textSize="25sp" />
+
+    <!-- ======== Talk something end ========== -->
 
 </RelativeLayout>

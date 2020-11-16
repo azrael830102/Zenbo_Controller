@@ -10,15 +10,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import com.asus.robotframework.API.MotionControl;
@@ -40,6 +43,8 @@ public class MainActivity extends RobotActivity {
     TextView hostInfo;
     ServerSocket serverSocket = null;
 
+    Socket controllerSocket;
+    Socket sensorSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,6 @@ public class MainActivity extends RobotActivity {
                     serverSocket = new ServerSocket(port);
                     hostInfo.setText(getLocalIpAddress() + " : " + port);
                     Log.d("Host ", getLocalIpAddress());
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -83,23 +87,44 @@ public class MainActivity extends RobotActivity {
         return new CommandJsonFormatObj(type, value);
     }
 
-    public static String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
-                        return inetAddress.getHostAddress();
-                    }
+//    public static String getLocalIpAddress() {
+//        try {
+//            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+//                NetworkInterface intf = en.nextElement();
+//                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+//                    InetAddress inetAddress = enumIpAddr.nextElement();
+//                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+//                        return inetAddress.getHostAddress();
+//                    }
+//                }
+//            }
+//        } catch (SocketException ex) {
+//            Log.e("WifiPreference IpAddress", ex.toString());
+//        }
+//        return null;
+//    }
+public String getLocalIpAddress() {
+    try {
+        for (Enumeration<NetworkInterface> en = NetworkInterface
+                .getNetworkInterfaces(); en.hasMoreElements();) {
+            NetworkInterface intf = en.nextElement();
+            for (Enumeration<InetAddress> enumIpAddr = intf
+                    .getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                InetAddress inetAddress = enumIpAddr.nextElement();
+                System.out.println("ip1--:" + inetAddress);
+                System.out.println("ip2--:" + inetAddress.getHostAddress());
+
+                // for getting IPV4 format
+                if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                    return inetAddress.getHostAddress();
                 }
             }
-        } catch (SocketException ex) {
-            Log.e("WifiPreference IpAddress", ex.toString());
         }
-        return null;
+    } catch (Exception ex) {
+        Log.e("IP Address", ex.toString());
     }
-
+    return null;
+}
     class Listening extends Thread implements Runnable {
         @Override
         public void run() {
@@ -133,10 +158,26 @@ public class MainActivity extends RobotActivity {
             try {
                 while (true) {
                     try {
-                        CommandJsonFormatObj command = jsonObjToMsgObj(receiveFromClient(client));
-                        if (command != null) {
-                            doCommand(command);
+                        JSONObject jason_obj = receiveFromClient(client);
+                        if(jason_obj.has("Command_type")){
+                            CommandJsonFormatObj command = jsonObjToMsgObj(jason_obj);
+                            if (command != null) {
+                                doCommand(command, client);
+                            }
+                        }else if(jason_obj.has("isController")){
+                            boolean isController = (boolean) jason_obj.get("isController");
+                            if(isController){
+                                controllerSocket = client;
+                            }else{
+                                sensorSocket = client;
+                            }
+                        }else if(jason_obj.has("temperature")){
+                            String temperature = (String) jason_obj.get("temperature");
+                            Log.d("sensor value", temperature);
+                            robotAPI.robot.speak("it's " + temperature + "degrees now");
                         }
+
+
                     } catch (Exception ex) {
                         System.out.println("Error: " + ex.getMessage());
                         break;
@@ -148,32 +189,43 @@ public class MainActivity extends RobotActivity {
             }
         }
 
-        private void doCommand(CommandJsonFormatObj command) {
+        private void doCommand(CommandJsonFormatObj command, Socket client) throws IOException {
             Log.d("do Command", "Command Type : " + command.get_command_type() + " ; Command Value : " + command.get_command_value());
             int cmdType = Integer.parseInt(command.get_command_type());
             switch (cmdType) {
                 case 0:// disconnect
+                    Log.d("doCommand",0 + " disconnect " + command.get_command_value());
                     robotAPI.robot.setExpression(RobotFace.LAZY);
+                    client.close();
                     break;
                 case 1:// move
                     robotAPI.robot.setExpression(RobotFace.SHOCKED);
-                    if (command.get_command_value().equals(CommandJsonFormatObj.MOV_FORWARD)) {
-                        robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.FORWARD);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_BACKWARD)) {
-                        robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.BACKWARD);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_LEFT)) {
-                        robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_RIGHT)) {
-                        robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_RIGHT);
-                    } else if (command.get_command_value().equals(CommandJsonFormatObj.MOV_STOP)) {
-                        robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.STOP);
+                    Log.d("doCommand",1 + " move: " + command.get_command_value());
+                    switch(command.get_command_value()) {
+                        case CommandJsonFormatObj.MOV_FORWARD:
+                            robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.FORWARD);
+                            break;
+                        case CommandJsonFormatObj.MOV_BACKWARD:
+                            robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.BACKWARD);
+                            break;
+                        case CommandJsonFormatObj.MOV_LEFT:
+                            robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_LEFT);
+                            break;
+                        case CommandJsonFormatObj.MOV_RIGHT:
+                            robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.TURN_RIGHT);
+                            break;
+                        case CommandJsonFormatObj.MOV_STOP:
+                            robotAPI.motion.remoteControlBody(MotionControl.Direction.Body.STOP);
+                            break;
                     }
                     break;
                 case 2:// speak
+                    Log.d("doCommand",2 + " speak: " + command.get_command_value());
                     robotAPI.robot.setExpression(RobotFace.ACTIVE);
                     robotAPI.robot.speak(command.get_command_value());
                     break;
                 case 3:// wheel light
+                    Log.d("doCommand",3 + " wheel light: " + command.get_command_value());
                     if (command.get_command_value().equals(CommandJsonFormatObj.LIGHT_BREATH)) {
                         robotAPI.wheelLights.turnOff(WheelLights.Lights.SYNC_BOTH, 0xff);
                         robotAPI.wheelLights.setColor(WheelLights.Lights.SYNC_BOTH, 0xff, 0x00D031);
@@ -195,7 +247,19 @@ public class MainActivity extends RobotActivity {
                         robotAPI.wheelLights.startMarquee(WheelLights.Lights.SYNC_BOTH, WheelLights.Direction.DIRECTION_FORWARD, 40, 20, 3);
                     }
                     break;
-
+                case 4:// read sensor
+                    Log.d("doCommand",4 + " read sensor");
+                    if(sensorSocket!=null && sensorSocket.isConnected()){
+                        Log.d("read sensor",4 + "ask sensor socket for info");
+                        DataOutputStream out = new DataOutputStream(sensorSocket.getOutputStream());
+                        byte[] bytes = ("r\n").getBytes();
+                        out.write(bytes);
+                        out.flush();
+                    }else{
+                        Log.d("read sensor",4 + "no sensor socket");
+                        robotAPI.robot.speak("There is no sensor device.");
+                    }
+                    break;
             }
         }
     }
